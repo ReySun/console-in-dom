@@ -2,7 +2,11 @@
 import './style/console'
 
 import { IsType, typeOf } from './util/index';
-import Console  from './console';
+import { ConsoleInDom } from './console';
+
+const Console = ConsoleInDom.render(        //  const Console = ConsoleInDom.render()
+  document.getElementById('console_output') //  default HTMLElement is body
+);
 
 Console.log('string');
 console.log('string');
