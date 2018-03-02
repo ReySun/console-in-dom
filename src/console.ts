@@ -24,6 +24,12 @@ class Console {
     }else if(typeOf(msg) === IsType[3] || typeOf(msg) === IsType[4]){
       var nulld = this._createNull(msg);
       li.appendChild(nulld);
+    }else if(typeOf(msg) === IsType[5]){
+      var array = this._createArray(msg);
+      li.appendChild(array);
+    }else if(typeOf(msg) === IsType[6]){
+      var obj = this._createObject(msg);
+      li.appendChild(obj);
     }
 
     document.body.appendChild(li);
@@ -74,7 +80,6 @@ class Console {
   private _createNull(msg: null|undefined){
     var nulld = document.createElement('span');
     nulld.className = '_null';
-    console.log(msg);
     if(typeOf(msg) === IsType[3]){
         nulld.innerHTML = 'null';
     }else if(typeOf(msg) === IsType[4]){
@@ -83,80 +88,107 @@ class Console {
     return nulld;
   }
 
-//   private _createArray(arr: [any]){
-//     var start = this._createCommon('[');
-//     var end = this._createCommon(']');
-//     var fragment = document.createDocumentFragment();
-//     fragment.appendChild(start);
-//     if(arr.length != `0`){
-//         var len = 0;
-//         var undefined_repeat_pos = -1;var  null_repeat_pos = -1;
-//         var undefined_repeat_times = 1;var null_repeat_times = 1;
-//         var undefined_hasRepeat = false;var null_hasRepeat = false;
-//         /* ergodic the Array's empty index*/
-//         for(var key of arr){ // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of
-//             len++;
-//             if(util.type(key) === 'Number'){
-//                 var num = this._createNumber(key);
-//                 fragment.appendChild(num);
-//             }else if(util.type(key) === 'String'){
-//                 var str = this._createString(key);
-//                 fragment.appendChild(str);
-//             }else if(util.type(key) === 'Undefined'){
-//                 var nulld = this._createNull(key);
-//                 if(len -1 !== 0 && undefined_repeat_pos + 1 === len -1){
-//                     undefined_repeat_times++;
-//                 }
-//                 if(undefined_repeat_times === 1 || undefined_repeat_pos === -1){
-//                     fragment.appendChild(nulld);
-//                     if(arr[len-1] === arr[len]){
-//                         undefined_hasRepeat = true;
-//                     }else{
-//                         undefined_hasRepeat = false;
-//                     }
+  private _createArray(arr: any[]){
+    var start = this._createCommon('[');
+    var end = this._createCommon(']');
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(start);
+    if(arr.length !== 0){
+        var len = 0;
+        var undefined_repeat_pos = -1;var  null_repeat_pos = -1;
+        var undefined_repeat_times = 1;var null_repeat_times = 1;
+        var undefined_hasRepeat = false;var null_hasRepeat = false;
+        /* ergodic the Array's empty index*/
+        for(var key of arr){ // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of
+            len++;
+            if(typeOf(key) === IsType[1]){
+                var num = this._createNumber(key);
+                fragment.appendChild(num);
+            }else if(typeOf(key) === IsType[0]){
+                var str = this._createString(key);
+                fragment.appendChild(str);
+            }else if(typeOf(key) === IsType[4]){
+                var nulld = this._createNull(key);
+                if(len -1 !== 0 && undefined_repeat_pos + 1 === len -1){
+                    undefined_repeat_times++;
+                }
+                if(undefined_repeat_times === 1 || undefined_repeat_pos === -1){
+                    fragment.appendChild(nulld);
+                    if(arr[len-1] === arr[len]){
+                        undefined_hasRepeat = true;
+                    }else{
+                        undefined_hasRepeat = false;
+                    }
 
-//                 }else if(undefined_repeat_times !== 1 && (len === arr.length || arr[len-1] !== arr[len])){
-//                     var repeatSpan = document.createElement('span');
-//                     repeatSpan.className = 'null';
-//                     repeatSpan.innerHTML = ` × ${undefined_repeat_times}`;
-//                     repeatSpan.style.fontSize='12px'
-//                     fragment.appendChild(repeatSpan);
-//                     undefined_repeat_times = 1;
-//                     undefined_hasRepeat = false;
-//                 }
-//                 undefined_repeat_pos = len - 1;
-//             }else if(util.type(key) === 'Null'){
-//                 var nulld = this._createNull(key);
-//                 if(len -1 !== 0 && null_repeat_pos + 1 === len -1){
-//                     null_repeat_times++;
-//                 }
-//                 if(null_repeat_times === 1 || null_repeat_pos === -1){
-//                     fragment.appendChild(nulld);
-//                     if(arr[len-1] === arr[len]){
-//                         null_hasRepeat = true;
-//                     }else{
-//                         null_hasRepeat = false;
-//                     }
-//                 }else if(null_repeat_times !== 1 && (len === arr.length || arr[len-1] !== arr[len])){
-//                     var repeatSpan = document.createElement('span');
-//                     repeatSpan.className = 'null';
-//                     repeatSpan.innerHTML = ` × ${null_repeat_times}`;
-//                     repeatSpan.style.fontSize='12px'
-//                     fragment.appendChild(repeatSpan);
-//                     null_repeat_times = 1;
-//                     null_hasRepeat = false;
-//                 }
-//                 null_repeat_pos = len - 1;
-//             }
-//             if(len !== arr.length && undefined_repeat_times === 1 && !undefined_hasRepeat && null_repeat_times === 1 && !null_hasRepeat ){
-//                 var comma = this._createComma();
-//                 fragment.appendChild(comma);
-//             }
-//         }
-//     }
-//     fragment.appendChild(end);
-//     return fragment;
-//   }
+                }else if(undefined_repeat_times !== 1 && (len === arr.length || arr[len-1] !== arr[len])){
+                    var repeatSpan = document.createElement('span');
+                    repeatSpan.className = 'null';
+                    repeatSpan.innerHTML = ` × ${undefined_repeat_times}`;
+                    repeatSpan.style.fontSize='12px'
+                    fragment.appendChild(repeatSpan);
+                    undefined_repeat_times = 1;
+                    undefined_hasRepeat = false;
+                }
+                undefined_repeat_pos = len - 1;
+            }else if(typeOf(key) === IsType[3]){
+                var nulld = this._createNull(key);
+                if(len -1 !== 0 && null_repeat_pos + 1 === len -1){
+                    null_repeat_times++;
+                }
+                if(null_repeat_times === 1 || null_repeat_pos === -1){
+                    fragment.appendChild(nulld);
+                    if(arr[len-1] === arr[len]){
+                        null_hasRepeat = true;
+                    }else{
+                        null_hasRepeat = false;
+                    }
+                }else if(null_repeat_times !== 1 && (len === arr.length || arr[len-1] !== arr[len])){
+                    var repeatSpan = document.createElement('span');
+                    repeatSpan.className = 'null';
+                    repeatSpan.innerHTML = ` × ${null_repeat_times}`;
+                    repeatSpan.style.fontSize='12px'
+                    fragment.appendChild(repeatSpan);
+                    null_repeat_times = 1;
+                    null_hasRepeat = false;
+                }
+                null_repeat_pos = len - 1;
+            }
+            if(len !== arr.length && undefined_repeat_times === 1 && !undefined_hasRepeat && null_repeat_times === 1 && !null_hasRepeat ){
+                var comma = this._createComma();
+                fragment.appendChild(comma);
+            }
+        }
+    }
+    fragment.appendChild(end);
+    return fragment;
+  }
+  private _createSpace(times = 1){
+    var space = ''
+    var spaceSpan = document.createElement('span');
+    for(var i = 0;i < times; i++){
+        space+='&nbsp;'
+    }
+    spaceSpan.innerHTML = space;
+    return spaceSpan;
+  }
+  private _createObject(obj: object){
+    var start = this._createCommon('[object Object] {');
+    var spaceSpan = this._createSpace(7)
+    var end = this._createCommon('}');
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(start);
+    var br = document.createElement('br')
+    for(var key in obj){
+        fragment.appendChild(br)
+        fragment.appendChild(spaceSpan)
+    }
+
+    fragment.appendChild(end);
+    return fragment;
+  }
+  private _isEmptyObject(obj: object){
+      return Object.getOwnPropertyNames(obj).length > 0 ? true : false;
+  }
 }
 
 export default Console.getInstance()

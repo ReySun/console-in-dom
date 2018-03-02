@@ -15,3 +15,12 @@ console.log(null);
 
 Console.log(undefined);
 console.log(undefined);
+
+var obj = {name: "jack", age: 23};
+var arr = [,,1,,,,5,,"2", null, null, null, undefined, null,,,];
+
+Console.log(arr);
+console.log(arr);
+
+Console.log({});
+console.log({});
