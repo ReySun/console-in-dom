@@ -15,4 +15,24 @@ var IsType;
     IsType[IsType["Object"] = 6] = "Object";
     IsType[IsType["Function"] = 7] = "Function";
 })(IsType = exports.IsType || (exports.IsType = {}));
+function _insertAfter(parent, newElement, targetElement) {
+    if (parent.lastChild == targetElement) {
+        parent.appendChild(newElement);
+    }
+    else {
+        parent.insertBefore(newElement, targetElement.nextElementSibling);
+    }
+}
+exports._insertAfter = _insertAfter;
+function _listen(target, eventName, callback) {
+    target.addEventListener(eventName, callback, false);
+    return function () {
+        target.removeEventListener(eventName, callback, false);
+    };
+}
+exports._listen = _listen;
+function _isEmptyObject(obj) {
+    return Object.getOwnPropertyNames(obj).length > 0 ? true : false;
+}
+exports._isEmptyObject = _isEmptyObject;
 //# sourceMappingURL=index.js.map

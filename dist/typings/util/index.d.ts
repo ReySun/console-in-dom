@@ -9,3 +9,6 @@ export declare enum IsType {
     "Object" = 6,
     "Function" = 7,
 }
+export declare function _insertAfter(parent: HTMLElement, newElement: HTMLElement, targetElement: HTMLElement): void;
+export declare function _listen(target: 'window' | 'document' | 'body' | any, eventName: string, callback: (event: any) => boolean | void): Function;
+export declare function _isEmptyObject(obj: object): boolean;
