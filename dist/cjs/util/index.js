@@ -32,7 +32,7 @@ function _listen(target, eventName, callback) {
 }
 exports._listen = _listen;
 function _isEmptyObject(obj) {
-    return Object.getOwnPropertyNames(obj).length > 0 ? true : false;
+    return Object.getOwnPropertyNames(obj).length > 0 ? false : true;
 }
 exports._isEmptyObject = _isEmptyObject;
 //# sourceMappingURL=index.js.map

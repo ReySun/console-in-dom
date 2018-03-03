@@ -11,8 +11,6 @@ class Console {
 
   private ArrayFolders: Function[] = [];
 
-  private ArrayFolderCount: number = 0;
-
   static render(node?: HTMLElement) {
     if (!Console.log) Console.log = new Console();
     if (node) Console.DOM_NODE = node;
@@ -38,7 +36,6 @@ class Console {
       let nulld = this._createNull(msg);
       li.appendChild(nulld);
     }else if(typeOf(msg) === IsType[5]){
-      this.ArrayFolderCount = 0;
       let array = this._createArray(msg);
       li.appendChild(array);
     }else if(typeOf(msg) === IsType[6]){
@@ -89,18 +86,21 @@ class Console {
     }
     return nulld;
   }
-
+  private _funcToString(fun: Function){
+    var str = fun.toString()
+      .replace(/\r/g,'')
+      .replace(/\n/g,'')
+      .replace(/\t/g,'')
+      .replace(/( ){2,}/g,'')
+    return str;
+  }
   private _createFunction(fun: Function){
     var fragment = document.createDocumentFragment();
     let funcMark = document.createElement('span');
     funcMark.className = '_function';
     let spaces = this._createSpace(8);
     spaces.className = '_timeLine';
-    var str = fun.toString()
-      .replace(/\r/g,'')
-      .replace(/\n/g,'')
-      .replace(/\t/g,'')
-      .replace(/( ){2,}/g,'')
+    let str = this._funcToString(fun);
     funcMark.innerHTML = `${str.slice(0,8)}`;
     var funcSpan = document.createElement('span');
     funcSpan.className = 'common'
@@ -115,10 +115,10 @@ class Console {
     let start = this._createCommon('[');
     let end = this._createCommon(']');
     let folderSpan = document.createElement('span');
-    folderSpan.className = '_ArrayFolder'
+    folderSpan.className = '_ArrayFolder';
     let triangle;
-    if(isFirst){
-      triangle = this._createTriangle()
+    if(isFirst && arr.length !== 0){
+      triangle = this._createTriangle();
     }else{
       triangle = document.createElement('span');
       triangle.innerHTML = 'Array'
@@ -197,13 +197,13 @@ class Console {
           folderSpan.appendChild(span);
         }else if(typeOf(key) === IsType[6]){
           let span = document.createElement('span');
-          span.className = '_common';
+          span.className = '_public';
           span.title = 'Object';
           span.innerHTML = `{…}`;
           folderSpan.appendChild(span);
         }else if(typeOf(key) === IsType[7]){
           let span = document.createElement('span');
-          span.className = '_common';
+          span.className = '_public';
           span.title = 'Function';
           span.innerHTML = `∱`;
           folderSpan.appendChild(span);
@@ -232,7 +232,7 @@ class Console {
     this.ArrayFolders.push(ArrayFolder)
     return folderSpan;
   }
-  private _createFolder(arr: any[]){
+  private _createFolder(arr: any[]|Object){
     let folder_div = document.createElement('div');
     folder_div.className = '_folder-div';
     
@@ -240,14 +240,9 @@ class Console {
       let div = document.createElement('div');
       let timeLine = this._createSpace(8);
       timeLine.className = '_timeLine';
-      // for(var i =0; i < this.ArrayFolderCount; i++){
-      //   let spaces = this._createSpace(2);
-      //   spaces.className = '_spaces';
-      //   div.appendChild(spaces);
-      // }
-      console.log(this.ArrayFolderCount)
+      /* TODO: ADD Miult Array */
       let variable = this._createVariable(key);
-      let colon = this._createCommon(':&nbsp;');
+      let colon = this._createCommon(': ');
       div.appendChild(timeLine);
       div.appendChild(variable);
       div.appendChild(colon);
@@ -262,16 +257,17 @@ class Console {
         value = this._createNull(arr[key]);
       }else if(typeOf(arr[key]) === IsType[5]){
         value = this._createArray(arr[key], false)
+      }else if(typeOf(arr[key]) === IsType[6]){
+        value = this._createObject(arr[key], false)
       }else if(typeOf(arr[key]) === IsType[7]){
         value = this._createFunction(arr[key])
       }else{
         value = document.createDocumentFragment()
       }
       div.appendChild(value);
-      
       folder_div.appendChild(div);
     }
-    
+
     return folder_div;
   }
 
@@ -282,20 +278,82 @@ class Console {
     return variable;
   }
 
-  private _createObject(obj: object){
-    let start = this._createCommon('[object Object] {');
-    let spaceSpan = this._createSpace(7)
+  private _createObject(obj: object, isFirst = true){
+    let folderSpan = document.createElement('span');
+    folderSpan.className = '_ObjectFolder';
+    let start = this._createCommon(' Object {');
     let end = this._createCommon('}');
-    let fragment = document.createDocumentFragment();
-    fragment.appendChild(start);
-    let br = document.createElement('br')
+    if (!_isEmptyObject(obj) && isFirst){
+      let triangle = this._createTriangle();
+      folderSpan.appendChild(triangle);
+    }
+    folderSpan.appendChild(start);
+    let loopCount = 0;
+    let objKeys = Object.keys(obj);
     for(let key in obj){
-      fragment.appendChild(br)
-      fragment.appendChild(spaceSpan)
+      if(++loopCount >= 6) break;
+      let keySpan = document.createElement('span');
+      keySpan.innerHTML = `${key}: `;
+      keySpan.className = '_public';
+      let valueSpan;
+      if(typeOf(obj[key]) === IsType[0]){
+        valueSpan = this._createString(obj[key])
+      }else if(typeOf(obj[key]) === IsType[1]){
+        valueSpan = this._createNumber(obj[key])
+      }else if(typeOf(obj[key]) === IsType[2]){
+        valueSpan = this._createBoolean(obj[key])
+      }else if(typeOf(obj[key]) === IsType[3] || typeOf(obj[key]) === IsType[4]){
+        valueSpan = this._createNull(obj[key])
+      }else if(typeOf(obj[key]) === IsType[5]){
+        valueSpan = document.createElement('span');
+        valueSpan.className = '_common';
+        valueSpan.innerHTML = `Array(${obj[key].length})`;
+      }else if(typeOf(obj[key]) === IsType[6]){
+        valueSpan = document.createElement('span');
+        valueSpan.className = '_public';
+        valueSpan.title = 'Object';
+        valueSpan.innerHTML = `{…}`;
+      }else if(typeOf(obj[key]) === IsType[7]){
+        valueSpan = document.createElement('span');
+        valueSpan.className = '_public';
+        valueSpan.title = 'Function';
+        valueSpan.innerHTML = `∱`;
+      }else{
+        valueSpan = document.createDocumentFragment();
+      }
+      
+      let comma = this._createComma();
+      folderSpan.appendChild(keySpan);
+      folderSpan.appendChild(valueSpan);
+      if(objKeys[objKeys.length -1] !== key) folderSpan.appendChild(comma);
     }
 
-    fragment.appendChild(end);
-    return fragment;
+    if(!_isEmptyObject(obj) && loopCount == 6){
+      let ellipsis = document.createElement('span');
+      ellipsis.className = '_public';
+      ellipsis.innerHTML = '…';
+      folderSpan.appendChild(ellipsis);
+    }
+    folderSpan.appendChild(end);
+    // folderSpan.addEventListener('click', ()=>{
+    //   console.log(22222)
+    // }, false)
+    let hasClick = false;
+    let ArrayFolder = _listen(folderSpan, 'click', (event: MouseEvent)=>{
+      let targetElement: any;
+      if(event.srcElement.parentElement.className === '_ObjectFolder'){
+        targetElement = event.srcElement.parentElement.parentElement;
+        targetElement.classList.toggle('_folder-toggle');
+        if(!hasClick && isFirst){
+          hasClick = true;
+          let div = this._createFolder(obj);
+          // _insertAfter(Console.DOM_NODE, div, targetElement)
+          targetElement.appendChild(div);
+        }
+      }
+    })
+    this.ArrayFolders.push(ArrayFolder)
+    return folderSpan;
   }
 
   /* timeline: 时间线 */

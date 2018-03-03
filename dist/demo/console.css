@@ -23,8 +23,11 @@
   -moz-transition: -moz-transform 0.1s linear;
   -o-transition: -o-transform 0.1s linear;
   -webkit-transition: -webkit-transform 0.1s linear;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
-._folder-toggle > ._folder {
+._folder-toggle ._folder {
   transform: rotate(90deg);
 }
 .output-li div._folder-div {
@@ -34,7 +37,7 @@
   display: block;
 }
 .output-li ._public {
-  color: #212121;
+  color: #565656;
 }
 .output-li ._common {
   color: #212121;
@@ -59,4 +62,7 @@
 }
 .output-li ._timeLine {
   color: #B7B7B7;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }

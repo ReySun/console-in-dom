@@ -22,24 +22,28 @@ console.log(null);
 Console.log(undefined);
 console.log(undefined);
 
+Console.log(getElementById);
+console.log(getElementById);
+
 var obj = {name: "jack", age: 23};
-var arr1 = [1, 2, obj]
-var arr2 = [4, 5, 6, arr1]
-function     getElementById(id: string){
+var arr_obj = [1, 2, obj]
+var arr_arr = [4, 5, 6, arr_obj]
+function getElementById(id: string){
   var ss = 1
   return document.getElementById(id)
 }
-var arr = [,true,1,'string',5, null,undefined,arr2,,1,getElementById,1,1,];// ,1,1,,1,1,1,1,,1,1,1,11,1,1,,11,1,1,1,1,,11,1,1,1,1,1,,1,11,,1,1,,
 
-Console.log(arr);
+var arr = ['string',5, null,undefined,null,null,,,true,false,arr_arr,getElementById,obj];// ,1,1,,1,1,1,1,,1,1,1,11,1,1,,11,1,1,1,1,,11,1,1,1,1,1,,1,11,,1,1,,
+var obj_test = {arr_obj, obj, name: "jack", age: 23, dom: getElementById, isMale: true,  class: 'senior 2'};
+
+Console.log([]);
+console.log([]);
+
 Console.log(arr);
 console.log(arr);
 
 Console.log({});
 console.log({});
 
-Console.log(getElementById);
-console.log(getElementById.toString());
-
-Console.log(obj);
-console.log(obj);
+Console.log(obj_test);
+console.log(obj_test);

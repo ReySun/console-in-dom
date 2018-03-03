@@ -29,5 +29,5 @@ export function _listen(target: 'window'|'document'|'body'|any, eventName: strin
 }
 
 export function _isEmptyObject(obj: object){
-  return Object.getOwnPropertyNames(obj).length > 0 ? true : false;
+  return Object.getOwnPropertyNames(obj).length > 0 ? false : true;
 }
