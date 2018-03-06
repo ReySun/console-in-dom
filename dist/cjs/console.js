@@ -5,7 +5,9 @@ var index_1 = require("./util/index");
 // http://www.codebelt.com/typescript/typescript-singleton-pattern/
 var Console = /** @class */ (function () {
     function Console() {
-        this.ArrayFolders = [];
+        this.Folders_listeners = [];
+        this.array_tabs_count = 0;
+        this.object_tabs_count = 0;
     }
     ;
     Console.render = function (node) {
@@ -16,6 +18,8 @@ var Console = /** @class */ (function () {
         return Console.log;
     };
     Console.prototype.log = function (msg) {
+        console.log(index_1.typeOf(msg));
+        console.log(msg);
         var li = document.createElement('li');
         li.className = 'output-li';
         var timeLine = this._createTimeLine();
@@ -37,17 +41,27 @@ var Console = /** @class */ (function () {
             li.appendChild(nulld);
         }
         else if (index_1.typeOf(msg) === index_1.IsType[5]) {
+            this.array_tabs_count = 0;
+            this.object_tabs_count = 0;
             var array = this._createArray(msg);
             li.appendChild(array);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[6]) {
+        else if (index_1.typeOf(msg) === index_1.IsType[6] || index_1.typeOf(msg) === index_1.IsType[8] || index_1.typeOf(msg) === index_1.IsType[9]) {
+            this.array_tabs_count = 0;
+            this.object_tabs_count = 0;
             var obj = this._createObject(msg);
             li.appendChild(obj);
         }
         else if (index_1.typeOf(msg) === index_1.IsType[7]) {
             var fun = this._createFunction(msg);
             li.appendChild(fun);
-        }
+        } /* else if(typeOf(msg) === IsType[10]){// Error
+          let str = this._createString('Error');
+          li.appendChild(str);
+        }else if(typeOf(msg) === IsType[11]){// HTMLDocument
+          let str = this._createString('document 相关请直接查看浏览器自带Elements面板');
+          li.appendChild(str);
+        } */
         Console.DOM_NODE.appendChild(li);
     };
     Console.prototype._createString = function (str) {
@@ -109,15 +123,14 @@ var Console = /** @class */ (function () {
         fragment.appendChild(funcSpan);
         return fragment;
     };
-    Console.prototype._createArray = function (arr, isFirst) {
-        var _this = this;
-        if (isFirst === void 0) { isFirst = true; }
+    Console.prototype._createArray = function (arr) {
         var start = this._createCommon('[');
         var end = this._createCommon(']');
         var folderSpan = document.createElement('span');
+        var fragment = document.createDocumentFragment();
         folderSpan.className = '_ArrayFolder';
         var triangle;
-        if (isFirst && arr.length !== 0) {
+        if (arr.length !== 0) {
             triangle = this._createTriangle();
         }
         else {
@@ -229,37 +242,35 @@ var Console = /** @class */ (function () {
                     folderSpan.appendChild(comma);
                 }
             }
+            var Array_listener = index_1._listen(folderSpan, 'click', function (event) {
+                var targetElement;
+                if (event.srcElement.parentElement.className.indexOf('_ArrayFolder') >= 0) {
+                    targetElement = event.srcElement.parentElement.parentElement;
+                    targetElement.classList.toggle('_toggle-div');
+                    folderSpan.classList.toggle('_toggle-folder');
+                }
+            });
+            this.Folders_listeners.push(Array_listener);
         }
         folderSpan.appendChild(end);
-        var ArrayFolder = index_1._listen(folderSpan, 'click', function (event) {
-            var targetElement;
-            if (event.srcElement.parentElement.className === '_ArrayFolder') {
-                targetElement = event.srcElement.parentElement.parentElement;
-                targetElement.classList.toggle('_folder-toggle');
-                if (!hasClick && isFirst) {
-                    hasClick = true;
-                    var div = _this._createFolder(arr);
-                    // _insertAfter(Console.DOM_NODE, div, targetElement)
-                    targetElement.appendChild(div);
-                }
-            }
-        });
-        this.ArrayFolders.push(ArrayFolder);
-        return folderSpan;
+        fragment.appendChild(folderSpan);
+        var folder_div = this._createFolder(arr);
+        fragment.appendChild(folder_div);
+        if (arr.length > 0)
+            this.array_tabs_count--;
+        return fragment;
     };
     Console.prototype._createFolder = function (arr) {
         var folder_div = document.createElement('div');
         folder_div.className = '_folder-div';
         for (var key in arr) {
             var div = document.createElement('div');
+            var tabs = this._createTabs((this.array_tabs_count + this.object_tabs_count));
             var timeLine = this._createSpace(8);
             timeLine.className = '_timeLine';
             /* TODO: ADD Miult Array */
             var variable = this._createVariable(key);
             var colon = this._createCommon(': ');
-            div.appendChild(timeLine);
-            div.appendChild(variable);
-            div.appendChild(colon);
             var value = void 0;
             if (index_1.typeOf(arr[key]) === index_1.IsType[0]) {
                 value = this._createString(arr[key]);
@@ -274,10 +285,14 @@ var Console = /** @class */ (function () {
                 value = this._createNull(arr[key]);
             }
             else if (index_1.typeOf(arr[key]) === index_1.IsType[5]) {
-                value = this._createArray(arr[key], false);
+                if (arr[key].length > 0)
+                    this.array_tabs_count++;
+                value = this._createArray(arr[key]);
             }
             else if (index_1.typeOf(arr[key]) === index_1.IsType[6]) {
-                value = this._createObject(arr[key], false);
+                if (!index_1._isEmptyObject(arr[key]))
+                    this.object_tabs_count++;
+                value = this._createObject(arr[key]);
             }
             else if (index_1.typeOf(arr[key]) === index_1.IsType[7]) {
                 value = this._createFunction(arr[key]);
@@ -285,10 +300,25 @@ var Console = /** @class */ (function () {
             else {
                 value = document.createDocumentFragment();
             }
+            div.appendChild(timeLine);
+            div.appendChild(tabs);
+            div.appendChild(variable);
+            div.appendChild(colon);
             div.appendChild(value);
             folder_div.appendChild(div);
         }
         return folder_div;
+    };
+    Console.prototype._createTabs = function (tabs) {
+        if (tabs === void 0) { tabs = 0; }
+        var spaces = document.createDocumentFragment();
+        for (var tab = 0; tab < tabs; tab++) {
+            var space = document.createElement('span');
+            space.innerHTML = '&nbsp;&nbsp;';
+            space.className = '_tabs';
+            spaces.appendChild(space);
+        }
+        return spaces;
     };
     Console.prototype._createVariable = function (innerHTML) {
         var variable = document.createElement('span');
@@ -296,14 +326,13 @@ var Console = /** @class */ (function () {
         variable.innerHTML = "" + innerHTML;
         return variable;
     };
-    Console.prototype._createObject = function (obj, isFirst) {
-        var _this = this;
-        if (isFirst === void 0) { isFirst = true; }
+    Console.prototype._createObject = function (obj) {
+        var fragment = document.createDocumentFragment();
         var folderSpan = document.createElement('span');
         folderSpan.className = '_ObjectFolder';
         var start = this._createCommon(' Object {');
         var end = this._createCommon('}');
-        if (!index_1._isEmptyObject(obj) && isFirst) {
+        if (!index_1._isEmptyObject(obj)) {
             var triangle = this._createTriangle();
             folderSpan.appendChild(triangle);
         }
@@ -316,42 +345,42 @@ var Console = /** @class */ (function () {
             var keySpan = document.createElement('span');
             keySpan.innerHTML = key + ": ";
             keySpan.className = '_public';
-            var valueSpan = void 0;
+            var value = void 0;
             if (index_1.typeOf(obj[key]) === index_1.IsType[0]) {
-                valueSpan = this._createString(obj[key]);
+                value = this._createString(obj[key]);
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[1]) {
-                valueSpan = this._createNumber(obj[key]);
+                value = this._createNumber(obj[key]);
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[2]) {
-                valueSpan = this._createBoolean(obj[key]);
+                value = this._createBoolean(obj[key]);
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[3] || index_1.typeOf(obj[key]) === index_1.IsType[4]) {
-                valueSpan = this._createNull(obj[key]);
+                value = this._createNull(obj[key]);
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[5]) {
-                valueSpan = document.createElement('span');
-                valueSpan.className = '_common';
-                valueSpan.innerHTML = "Array(" + obj[key].length + ")";
+                value = document.createElement('span');
+                value.className = '_common';
+                value.innerHTML = "Array(" + obj[key].length + ")";
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[6]) {
-                valueSpan = document.createElement('span');
-                valueSpan.className = '_public';
-                valueSpan.title = 'Object';
-                valueSpan.innerHTML = "{\u2026}";
+                value = document.createElement('span');
+                value.className = '_public';
+                value.title = 'Object';
+                value.innerHTML = "{\u2026}";
             }
             else if (index_1.typeOf(obj[key]) === index_1.IsType[7]) {
-                valueSpan = document.createElement('span');
-                valueSpan.className = '_public';
-                valueSpan.title = 'Function';
-                valueSpan.innerHTML = "\u2231";
+                value = document.createElement('span');
+                value.className = '_public';
+                value.title = 'Function';
+                value.innerHTML = "\u2231";
             }
             else {
-                valueSpan = document.createDocumentFragment();
+                value = document.createDocumentFragment();
             }
             var comma = this._createComma();
             folderSpan.appendChild(keySpan);
-            folderSpan.appendChild(valueSpan);
+            folderSpan.appendChild(value);
             if (objKeys[objKeys.length - 1] !== key)
                 folderSpan.appendChild(comma);
         }
@@ -362,25 +391,22 @@ var Console = /** @class */ (function () {
             folderSpan.appendChild(ellipsis);
         }
         folderSpan.appendChild(end);
-        // folderSpan.addEventListener('click', ()=>{
-        //   console.log(22222)
-        // }, false)
-        var hasClick = false;
-        var ArrayFolder = index_1._listen(folderSpan, 'click', function (event) {
+        fragment.appendChild(folderSpan);
+        var div = this._createFolder(obj);
+        fragment.appendChild(div);
+        var Object_listener = index_1._listen(folderSpan, 'click', function (event) {
             var targetElement;
-            if (event.srcElement.parentElement.className === '_ObjectFolder') {
+            if (event.srcElement.parentElement.className.indexOf('_ObjectFolder') >= 0) {
                 targetElement = event.srcElement.parentElement.parentElement;
-                targetElement.classList.toggle('_folder-toggle');
-                if (!hasClick && isFirst) {
-                    hasClick = true;
-                    var div = _this._createFolder(obj);
-                    // _insertAfter(Console.DOM_NODE, div, targetElement)
-                    targetElement.appendChild(div);
-                }
+                targetElement.classList.toggle('_toggle-div');
+                folderSpan.classList.toggle('_toggle-folder');
             }
         });
-        this.ArrayFolders.push(ArrayFolder);
-        return folderSpan;
+        this.Folders_listeners.push(Object_listener);
+        if (!index_1._isEmptyObject(obj)) {
+            this.object_tabs_count--;
+        }
+        return fragment;
     };
     /* timeline: 时间线 */
     Console.prototype._createTimeLine = function () {
@@ -415,7 +441,7 @@ var Console = /** @class */ (function () {
     Console.prototype._createTriangle = function () {
         var folder = document.createElement('span');
         folder.innerHTML = '▶';
-        folder.className = '_folder';
+        folder.className = '_folder-triangle';
         return folder;
     };
     Console.DOM_NODE = document.body;

@@ -14,6 +14,10 @@ var IsType;
     IsType[IsType["Array"] = 5] = "Array";
     IsType[IsType["Object"] = 6] = "Object";
     IsType[IsType["Function"] = 7] = "Function";
+    IsType[IsType["Window"] = 8] = "Window";
+    IsType[IsType["MouseEvent"] = 9] = "MouseEvent";
+    IsType[IsType["Error"] = 10] = "Error";
+    IsType[IsType["HTMLDocument"] = 11] = "HTMLDocument";
 })(IsType = exports.IsType || (exports.IsType = {}));
 function _insertAfter(parent, newElement, targetElement) {
     if (parent.lastChild == targetElement) {

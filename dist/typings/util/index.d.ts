@@ -8,6 +8,10 @@ export declare enum IsType {
     "Array" = 5,
     "Object" = 6,
     "Function" = 7,
+    "Window" = 8,
+    "MouseEvent" = 9,
+    "Error" = 10,
+    "HTMLDocument" = 11,
 }
 export declare function _insertAfter(parent: HTMLElement, newElement: HTMLElement, targetElement: HTMLElement): void;
 export declare function _listen(target: 'window' | 'document' | 'body' | any, eventName: string, callback: (event: any) => boolean | void): Function;

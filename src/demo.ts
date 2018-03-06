@@ -7,23 +7,17 @@ const Console = ConsoleInDom.render(        //  const Console = ConsoleInDom.ren
   document.getElementById('console_output') //  default HTMLElement is body
 );
 
-// Console.log('string');
-// console.log('string');
+Console.log('string');
 
-// Console.log(123);
-// console.log(123);
+Console.log(123);
 
-// Console.log(true);
-// console.log(false);
+Console.log(true);
 
-// Console.log(null);
-// console.log(null);
+Console.log(null);
 
-// Console.log(undefined);
-// console.log(undefined);
+Console.log(undefined);
 
-// Console.log(getElementById);
-// console.log(getElementById);
+Console.log(getElementById);
 
 var obj = {name: "jack", age: 23};
 var arr_obj = [1, 2, obj]
@@ -40,8 +34,12 @@ Console.log([]);
 
 Console.log(arr);
 
-// Console.log({});
-// console.log({});
+Console.log({});
 
-// Console.log(obj_test);
-// console.log(obj_test);
+Console.log(obj_test);
+// Console.log(window);
+// document.addEventListener('dblclick',(e)=>{
+//   Console.log(e)
+// },false)
+// Console.log(document);
+// Console.log(new Error('i"m an Error'));

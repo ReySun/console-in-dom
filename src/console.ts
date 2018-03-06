@@ -19,7 +19,9 @@ class Console {
   }
 
   log(msg: any) {
+    // console.log(typeOf(msg))
     console.log(msg)
+
     let li = document.createElement('li');
     li.className = 'output-li';
     let timeLine = this._createTimeLine();
@@ -42,7 +44,7 @@ class Console {
       this.object_tabs_count = 0;
       let array = this._createArray(msg);
       li.appendChild(array);
-    }else if(typeOf(msg) === IsType[6]){
+    }else if(typeOf(msg) === IsType[6] || typeOf(msg) === IsType[8] || typeOf(msg) === IsType[9]){//Object Window MouseEvent
       this.array_tabs_count = 0;
       this.object_tabs_count = 0;
       let obj = this._createObject(msg);
@@ -50,7 +52,13 @@ class Console {
     }else if(typeOf(msg) === IsType[7]){
       let fun = this._createFunction(msg);
       li.appendChild(fun);
-    }
+    }/* else if(typeOf(msg) === IsType[10]){// Error
+      let str = this._createString('Error');
+      li.appendChild(str);
+    }else if(typeOf(msg) === IsType[11]){// HTMLDocument
+      let str = this._createString('document 相关请直接查看浏览器自带Elements面板');
+      li.appendChild(str);
+    } */
 
     Console.DOM_NODE.appendChild(li);
   }
@@ -221,21 +229,22 @@ class Console {
         }
       }
 
-      let ArrayFolder = _listen(folderSpan, 'click', (event: MouseEvent)=>{
+      let Array_listener = _listen(folderSpan, 'click', (event: MouseEvent)=>{
         let targetElement: any;
         if(event.srcElement.parentElement.className.indexOf('_ArrayFolder') >= 0){
-          console.log('array_click');
           targetElement = event.srcElement.parentElement.parentElement;
           targetElement.classList.toggle('_toggle-div');
           folderSpan.classList.toggle('_toggle-folder');
         }
       })
-      this.Folders_listeners.push(ArrayFolder)
+      this.Folders_listeners.push(Array_listener)
     }
     folderSpan.appendChild(end);
     fragment.appendChild(folderSpan);
+
     let folder_div = this._createFolder(arr);
     fragment.appendChild(folder_div);
+    if(arr.length > 0) this.array_tabs_count--
     return fragment;
   }
   private _createFolder(arr: any[]|Object){
@@ -244,14 +253,13 @@ class Console {
 
     for(let key in arr){
       let div = document.createElement('div');
+      let tabs = this._createTabs((this.array_tabs_count + this.object_tabs_count))
+
       let timeLine = this._createSpace(8);
       timeLine.className = '_timeLine';
       /* TODO: ADD Miult Array */
       let variable = this._createVariable(key);
       let colon = this._createCommon(': ');
-      div.appendChild(timeLine);
-      div.appendChild(variable);
-      div.appendChild(colon);
       let value
       if(typeOf(arr[key]) === IsType[0]){
         value = this._createString(arr[key]);
@@ -262,19 +270,36 @@ class Console {
       }else if(typeOf(arr[key]) === IsType[3] || typeOf(arr[key]) === IsType[4]){
         value = this._createNull(arr[key]);
       }else if(typeOf(arr[key]) === IsType[5]){
+        if(arr[key].length > 0) this.array_tabs_count++
         value = this._createArray(arr[key])
       }else if(typeOf(arr[key]) === IsType[6]){
-        value = this._createObject(arr[key], false)
+        if(!_isEmptyObject(arr[key])) this.object_tabs_count++
+        value = this._createObject(arr[key])
       }else if(typeOf(arr[key]) === IsType[7]){
         value = this._createFunction(arr[key])
       }else{
         value = document.createDocumentFragment()
       }
+      div.appendChild(timeLine);
+      div.appendChild(tabs);
+      div.appendChild(variable);
+      div.appendChild(colon);
       div.appendChild(value);
       folder_div.appendChild(div);
     }
 
     return folder_div;
+  }
+
+  private _createTabs(tabs: number = 0){
+    let spaces = document.createDocumentFragment()
+    for(var tab = 0; tab < tabs; tab++){
+      let space = document.createElement('span')
+      space.innerHTML = '&nbsp;&nbsp;'
+      space.className = '_tabs';
+      spaces.appendChild(space)
+    }
+    return spaces;
   }
 
   private _createVariable(innerHTML: string|number){
@@ -284,12 +309,13 @@ class Console {
     return variable;
   }
 
-  private _createObject(obj: object, isFirst = true){
+  private _createObject(obj: object){
+    var fragment = document.createDocumentFragment();
     let folderSpan = document.createElement('span');
     folderSpan.className = '_ObjectFolder';
     let start = this._createCommon(' Object {');
     let end = this._createCommon('}');
-    if (!_isEmptyObject(obj) && isFirst){
+    if (!_isEmptyObject(obj)){
       let triangle = this._createTriangle();
       folderSpan.appendChild(triangle);
     }
@@ -301,36 +327,36 @@ class Console {
       let keySpan = document.createElement('span');
       keySpan.innerHTML = `${key}: `;
       keySpan.className = '_public';
-      let valueSpan;
+      let value;
       if(typeOf(obj[key]) === IsType[0]){
-        valueSpan = this._createString(obj[key])
+        value = this._createString(obj[key])
       }else if(typeOf(obj[key]) === IsType[1]){
-        valueSpan = this._createNumber(obj[key])
+        value = this._createNumber(obj[key])
       }else if(typeOf(obj[key]) === IsType[2]){
-        valueSpan = this._createBoolean(obj[key])
+        value = this._createBoolean(obj[key])
       }else if(typeOf(obj[key]) === IsType[3] || typeOf(obj[key]) === IsType[4]){
-        valueSpan = this._createNull(obj[key])
+        value = this._createNull(obj[key])
       }else if(typeOf(obj[key]) === IsType[5]){
-        valueSpan = document.createElement('span');
-        valueSpan.className = '_common';
-        valueSpan.innerHTML = `Array(${obj[key].length})`;
+        value = document.createElement('span');
+        value.className = '_common';
+        value.innerHTML = `Array(${obj[key].length})`;
       }else if(typeOf(obj[key]) === IsType[6]){
-        valueSpan = document.createElement('span');
-        valueSpan.className = '_public';
-        valueSpan.title = 'Object';
-        valueSpan.innerHTML = `{…}`;
+        value = document.createElement('span');
+        value.className = '_public';
+        value.title = 'Object';
+        value.innerHTML = `{…}`;
       }else if(typeOf(obj[key]) === IsType[7]){
-        valueSpan = document.createElement('span');
-        valueSpan.className = '_public';
-        valueSpan.title = 'Function';
-        valueSpan.innerHTML = `∱`;
+        value = document.createElement('span');
+        value.className = '_public';
+        value.title = 'Function';
+        value.innerHTML = `∱`;
       }else{
-        valueSpan = document.createDocumentFragment();
+        value = document.createDocumentFragment();
       }
 
       let comma = this._createComma();
       folderSpan.appendChild(keySpan);
-      folderSpan.appendChild(valueSpan);
+      folderSpan.appendChild(value);
       if(objKeys[objKeys.length -1] !== key) folderSpan.appendChild(comma);
     }
 
@@ -341,25 +367,23 @@ class Console {
       folderSpan.appendChild(ellipsis);
     }
     folderSpan.appendChild(end);
-    // folderSpan.addEventListener('click', ()=>{
-    //   console.log(22222)
-    // }, false)
-    let hasClick = false;
-    let ArrayFolder = _listen(folderSpan, 'click', (event: MouseEvent)=>{
+    fragment.appendChild(folderSpan)
+    let div = this._createFolder(obj);
+    fragment.appendChild(div);
+
+    let Object_listener = _listen(folderSpan, 'click', (event: MouseEvent)=>{
       let targetElement: any;
-      if(event.srcElement.parentElement.className === '_ObjectFolder'){
+      if(event.srcElement.parentElement.className.indexOf('_ObjectFolder') >= 0){
         targetElement = event.srcElement.parentElement.parentElement;
         targetElement.classList.toggle('_toggle-div');
-        if(!hasClick && isFirst){
-          hasClick = true;
-          let div = this._createFolder(obj);
-          // _insertAfter(Console.DOM_NODE, div, targetElement)
-          targetElement.appendChild(div);
-        }
+        folderSpan.classList.toggle('_toggle-folder');
       }
     })
-    this.Folders_listeners.push(ArrayFolder)
-    return folderSpan;
+    this.Folders_listeners.push(Object_listener);
+    if(!_isEmptyObject(obj)){
+      this.object_tabs_count--
+    }
+    return fragment;
   }
 
   /* timeline: 时间线 */

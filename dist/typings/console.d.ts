@@ -2,7 +2,9 @@ declare class Console {
     private static log;
     private constructor();
     private static DOM_NODE;
-    private ArrayFolders;
+    private Folders_listeners;
+    private array_tabs_count;
+    private object_tabs_count;
     static render(node?: HTMLElement): Console;
     log(msg: any): void;
     private _createString(str);
@@ -11,10 +13,11 @@ declare class Console {
     private _createNull(msg);
     private _funcToString(fun);
     private _createFunction(fun);
-    private _createArray(arr, isFirst?);
+    private _createArray(arr);
     private _createFolder(arr);
+    private _createTabs(tabs?);
     private _createVariable(innerHTML);
-    private _createObject(obj, isFirst?);
+    private _createObject(obj);
     private _createTimeLine();
     private _createCommon(innerHTML);
     private _createComma();
