@@ -11,6 +11,9 @@ export enum IsType{
   "Array",
   "Object",
   "Function",
+  "Window",
+  "MouseEvent",
+  "Error",
 }
 
 export function _insertAfter(parent: HTMLElement ,newElement: HTMLElement,targetElement: HTMLElement){

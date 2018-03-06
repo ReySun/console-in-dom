@@ -9,8 +9,9 @@ class Console {
 
   private static DOM_NODE: HTMLElement = document.body;
 
-  private ArrayFolders: Function[] = [];
-
+  private Folders_listeners: Function[] = [];
+  private array_tabs_count: number = 0;
+  private object_tabs_count: number = 0;
   static render(node?: HTMLElement) {
     if (!Console.log) Console.log = new Console();
     if (node) Console.DOM_NODE = node;
@@ -18,6 +19,7 @@ class Console {
   }
 
   log(msg: any) {
+    console.log(msg)
     let li = document.createElement('li');
     li.className = 'output-li';
     let timeLine = this._createTimeLine();
@@ -36,9 +38,13 @@ class Console {
       let nulld = this._createNull(msg);
       li.appendChild(nulld);
     }else if(typeOf(msg) === IsType[5]){
+      this.array_tabs_count = 0;
+      this.object_tabs_count = 0;
       let array = this._createArray(msg);
       li.appendChild(array);
     }else if(typeOf(msg) === IsType[6]){
+      this.array_tabs_count = 0;
+      this.object_tabs_count = 0;
       let obj = this._createObject(msg);
       li.appendChild(obj);
     }else if(typeOf(msg) === IsType[7]){
@@ -111,13 +117,14 @@ class Console {
     return fragment;
   }
 
-  private _createArray(arr: any[], isFirst = true){
+  private _createArray(arr: any[]){
     let start = this._createCommon('[');
     let end = this._createCommon(']');
     let folderSpan = document.createElement('span');
+    var fragment = document.createDocumentFragment();
     folderSpan.className = '_ArrayFolder';
     let triangle;
-    if(isFirst && arr.length !== 0){
+    if(arr.length !== 0){
       triangle = this._createTriangle();
     }else{
       triangle = document.createElement('span');
@@ -129,7 +136,7 @@ class Console {
     folderSpan.appendChild(triangle);
     folderSpan.appendChild(arrLen);
     folderSpan.appendChild(start);
-    let hasClick: boolean = false; 
+    let hasClick: boolean = false;
     if(arr.length !== 0){
       let len = 0;
       let undefined_repeat_pos = -1;let  null_repeat_pos = -1;
@@ -213,29 +220,28 @@ class Console {
           folderSpan.appendChild(comma);
         }
       }
+
+      let ArrayFolder = _listen(folderSpan, 'click', (event: MouseEvent)=>{
+        let targetElement: any;
+        if(event.srcElement.parentElement.className.indexOf('_ArrayFolder') >= 0){
+          console.log('array_click');
+          targetElement = event.srcElement.parentElement.parentElement;
+          targetElement.classList.toggle('_toggle-div');
+          folderSpan.classList.toggle('_toggle-folder');
+        }
+      })
+      this.Folders_listeners.push(ArrayFolder)
     }
     folderSpan.appendChild(end);
-    
-    let ArrayFolder = _listen(folderSpan, 'click', (event: MouseEvent)=>{
-      let targetElement: any;
-      if(event.srcElement.parentElement.className === '_ArrayFolder'){
-        targetElement = event.srcElement.parentElement.parentElement;
-        targetElement.classList.toggle('_folder-toggle');
-        if(!hasClick && isFirst){
-          hasClick = true;
-          let div = this._createFolder(arr);
-          // _insertAfter(Console.DOM_NODE, div, targetElement)
-          targetElement.appendChild(div);
-        }
-      }
-    })
-    this.ArrayFolders.push(ArrayFolder)
-    return folderSpan;
+    fragment.appendChild(folderSpan);
+    let folder_div = this._createFolder(arr);
+    fragment.appendChild(folder_div);
+    return fragment;
   }
   private _createFolder(arr: any[]|Object){
     let folder_div = document.createElement('div');
     folder_div.className = '_folder-div';
-    
+
     for(let key in arr){
       let div = document.createElement('div');
       let timeLine = this._createSpace(8);
@@ -256,7 +262,7 @@ class Console {
       }else if(typeOf(arr[key]) === IsType[3] || typeOf(arr[key]) === IsType[4]){
         value = this._createNull(arr[key]);
       }else if(typeOf(arr[key]) === IsType[5]){
-        value = this._createArray(arr[key], false)
+        value = this._createArray(arr[key])
       }else if(typeOf(arr[key]) === IsType[6]){
         value = this._createObject(arr[key], false)
       }else if(typeOf(arr[key]) === IsType[7]){
@@ -321,7 +327,7 @@ class Console {
       }else{
         valueSpan = document.createDocumentFragment();
       }
-      
+
       let comma = this._createComma();
       folderSpan.appendChild(keySpan);
       folderSpan.appendChild(valueSpan);
@@ -343,7 +349,7 @@ class Console {
       let targetElement: any;
       if(event.srcElement.parentElement.className === '_ObjectFolder'){
         targetElement = event.srcElement.parentElement.parentElement;
-        targetElement.classList.toggle('_folder-toggle');
+        targetElement.classList.toggle('_toggle-div');
         if(!hasClick && isFirst){
           hasClick = true;
           let div = this._createFolder(obj);
@@ -352,7 +358,7 @@ class Console {
         }
       }
     })
-    this.ArrayFolders.push(ArrayFolder)
+    this.Folders_listeners.push(ArrayFolder)
     return folderSpan;
   }
 
@@ -392,7 +398,7 @@ class Console {
   private _createTriangle(){
     let folder = document.createElement('span');
     folder.innerHTML = '▶';
-    folder.className = '_folder';
+    folder.className = '_folder-triangle';
     return folder;
   }
 }
