@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "es2015",
+    "target": "es5",
+    "declaration": true,
+    "declarationDir": "../dist/typings",
+    "outDir": "../dist/es2015"
+  }
+}
