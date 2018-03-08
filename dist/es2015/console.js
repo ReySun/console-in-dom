@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = require("./util/index");
+import { typeOf, IsType, _listen, _isEmptyObject } from './util/index';
 // https://stackoverflow.com/questions/30174078/how-to-define-singleton-in-typescript
 // http://www.codebelt.com/typescript/typescript-singleton-pattern/
 var Console = /** @class */ (function () {
@@ -24,35 +22,35 @@ var Console = /** @class */ (function () {
         li.className = 'output-li';
         var timeLine = this._createTimeLine();
         li.appendChild(timeLine);
-        if (index_1.typeOf(msg) === index_1.IsType[0]) {
+        if (typeOf(msg) === IsType[0]) {
             var str = this._createString(msg);
             li.appendChild(str);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[1]) {
+        else if (typeOf(msg) === IsType[1]) {
             var num = this._createNumber(msg);
             li.appendChild(num);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[2]) {
+        else if (typeOf(msg) === IsType[2]) {
             var bool = this._createBoolean(msg);
             li.appendChild(bool);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[3] || index_1.typeOf(msg) === index_1.IsType[4]) {
+        else if (typeOf(msg) === IsType[3] || typeOf(msg) === IsType[4]) {
             var nulld = this._createNull(msg);
             li.appendChild(nulld);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[5]) {
+        else if (typeOf(msg) === IsType[5]) {
             this.array_tabs_count = 0;
             this.object_tabs_count = 0;
             var array = this._createArray(msg);
             li.appendChild(array);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[6] || index_1.typeOf(msg) === index_1.IsType[8] || index_1.typeOf(msg) === index_1.IsType[9]) {
+        else if (typeOf(msg) === IsType[6] || typeOf(msg) === IsType[8] || typeOf(msg) === IsType[9]) {
             this.array_tabs_count = 0;
             this.object_tabs_count = 0;
             var obj = this._createObject(msg);
             li.appendChild(obj);
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[7]) {
+        else if (typeOf(msg) === IsType[7]) {
             var fun = this._createFunction(msg);
             li.appendChild(fun);
         } /* else if(typeOf(msg) === IsType[10]){// Error
@@ -91,10 +89,10 @@ var Console = /** @class */ (function () {
     Console.prototype._createNull = function (msg) {
         var nulld = document.createElement('span');
         nulld.className = '_null';
-        if (index_1.typeOf(msg) === index_1.IsType[3]) {
+        if (typeOf(msg) === IsType[3]) {
             nulld.innerHTML = 'null';
         }
-        else if (index_1.typeOf(msg) === index_1.IsType[4]) {
+        else if (typeOf(msg) === IsType[4]) {
             nulld.innerHTML = 'undefined';
         }
         return nulld;
@@ -157,19 +155,19 @@ var Console = /** @class */ (function () {
             for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
                 var key = arr_1[_i];
                 len++;
-                if (index_1.typeOf(key) === index_1.IsType[0]) {
+                if (typeOf(key) === IsType[0]) {
                     var str = this._createString(key);
                     folderSpan.appendChild(str);
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[1]) {
+                else if (typeOf(key) === IsType[1]) {
                     var num = this._createNumber(key);
                     folderSpan.appendChild(num);
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[2]) {
+                else if (typeOf(key) === IsType[2]) {
                     var bool = this._createBoolean(key);
                     folderSpan.appendChild(bool);
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[3]) {
+                else if (typeOf(key) === IsType[3]) {
                     var nulld = this._createNull(key);
                     if (len - 1 !== 0 && null_repeat_pos + 1 === len - 1) {
                         null_repeat_times++;
@@ -193,7 +191,7 @@ var Console = /** @class */ (function () {
                     }
                     null_repeat_pos = len - 1;
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[4]) {
+                else if (typeOf(key) === IsType[4]) {
                     var nulld = this._createNull(key);
                     if (len - 1 !== 0 && undefined_repeat_pos + 1 === len - 1) {
                         undefined_repeat_times++;
@@ -217,20 +215,20 @@ var Console = /** @class */ (function () {
                     }
                     undefined_repeat_pos = len - 1;
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[5]) {
+                else if (typeOf(key) === IsType[5]) {
                     var span = document.createElement('span');
                     span.className = '_common';
                     span.innerHTML = "Array(" + key.length + ")";
                     folderSpan.appendChild(span);
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[6]) {
+                else if (typeOf(key) === IsType[6]) {
                     var span = document.createElement('span');
                     span.className = '_public';
                     span.title = 'Object';
                     span.innerHTML = "{\u2026}";
                     folderSpan.appendChild(span);
                 }
-                else if (index_1.typeOf(key) === index_1.IsType[7]) {
+                else if (typeOf(key) === IsType[7]) {
                     var span = document.createElement('span');
                     span.className = '_public';
                     span.title = 'Function';
@@ -242,7 +240,7 @@ var Console = /** @class */ (function () {
                     folderSpan.appendChild(comma);
                 }
             }
-            var Array_listener = index_1._listen(folderSpan, 'click', function (event) {
+            var Array_listener = _listen(folderSpan, 'click', function (event) {
                 var targetElement;
                 if (event.srcElement.parentElement.className.indexOf('_ArrayFolder') >= 0) {
                     targetElement = event.srcElement.parentElement.parentElement;
@@ -272,29 +270,29 @@ var Console = /** @class */ (function () {
             var variable = this._createVariable(key);
             var colon = this._createCommon(': ');
             var value = void 0;
-            if (index_1.typeOf(arr[key]) === index_1.IsType[0]) {
+            if (typeOf(arr[key]) === IsType[0]) {
                 value = this._createString(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[1]) {
+            else if (typeOf(arr[key]) === IsType[1]) {
                 value = this._createNumber(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[2]) {
+            else if (typeOf(arr[key]) === IsType[2]) {
                 value = this._createBoolean(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[3] || index_1.typeOf(arr[key]) === index_1.IsType[4]) {
+            else if (typeOf(arr[key]) === IsType[3] || typeOf(arr[key]) === IsType[4]) {
                 value = this._createNull(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[5]) {
+            else if (typeOf(arr[key]) === IsType[5]) {
                 if (arr[key].length > 0)
                     this.array_tabs_count++;
                 value = this._createArray(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[6]) {
-                if (!index_1._isEmptyObject(arr[key]))
+            else if (typeOf(arr[key]) === IsType[6]) {
+                if (!_isEmptyObject(arr[key]))
                     this.object_tabs_count++;
                 value = this._createObject(arr[key]);
             }
-            else if (index_1.typeOf(arr[key]) === index_1.IsType[7]) {
+            else if (typeOf(arr[key]) === IsType[7]) {
                 value = this._createFunction(arr[key]);
             }
             else {
@@ -332,7 +330,7 @@ var Console = /** @class */ (function () {
         folderSpan.className = '_ObjectFolder';
         var start = this._createCommon(' Object {');
         var end = this._createCommon('}');
-        if (!index_1._isEmptyObject(obj)) {
+        if (!_isEmptyObject(obj)) {
             var triangle = this._createTriangle();
             folderSpan.appendChild(triangle);
         }
@@ -346,30 +344,30 @@ var Console = /** @class */ (function () {
             keySpan.innerHTML = key + ": ";
             keySpan.className = '_public';
             var value = void 0;
-            if (index_1.typeOf(obj[key]) === index_1.IsType[0]) {
+            if (typeOf(obj[key]) === IsType[0]) {
                 value = this._createString(obj[key]);
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[1]) {
+            else if (typeOf(obj[key]) === IsType[1]) {
                 value = this._createNumber(obj[key]);
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[2]) {
+            else if (typeOf(obj[key]) === IsType[2]) {
                 value = this._createBoolean(obj[key]);
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[3] || index_1.typeOf(obj[key]) === index_1.IsType[4]) {
+            else if (typeOf(obj[key]) === IsType[3] || typeOf(obj[key]) === IsType[4]) {
                 value = this._createNull(obj[key]);
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[5]) {
+            else if (typeOf(obj[key]) === IsType[5]) {
                 value = document.createElement('span');
                 value.className = '_common';
                 value.innerHTML = "Array(" + obj[key].length + ")";
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[6]) {
+            else if (typeOf(obj[key]) === IsType[6]) {
                 value = document.createElement('span');
                 value.className = '_public';
                 value.title = 'Object';
                 value.innerHTML = "{\u2026}";
             }
-            else if (index_1.typeOf(obj[key]) === index_1.IsType[7]) {
+            else if (typeOf(obj[key]) === IsType[7]) {
                 value = document.createElement('span');
                 value.className = '_public';
                 value.title = 'Function';
@@ -384,7 +382,7 @@ var Console = /** @class */ (function () {
             if (objKeys[objKeys.length - 1] !== key)
                 folderSpan.appendChild(comma);
         }
-        if (!index_1._isEmptyObject(obj) && loopCount == 6) {
+        if (!_isEmptyObject(obj) && loopCount == 6) {
             var ellipsis = document.createElement('span');
             ellipsis.className = '_public';
             ellipsis.innerHTML = '…';
@@ -394,7 +392,7 @@ var Console = /** @class */ (function () {
         fragment.appendChild(folderSpan);
         var div = this._createFolder(obj);
         fragment.appendChild(div);
-        var Object_listener = index_1._listen(folderSpan, 'click', function (event) {
+        var Object_listener = _listen(folderSpan, 'click', function (event) {
             var targetElement;
             if (event.srcElement.parentElement.className.indexOf('_ObjectFolder') >= 0) {
                 targetElement = event.srcElement.parentElement.parentElement;
@@ -403,7 +401,7 @@ var Console = /** @class */ (function () {
             }
         });
         this.Folders_listeners.push(Object_listener);
-        if (!index_1._isEmptyObject(obj)) {
+        if (!_isEmptyObject(obj)) {
             this.object_tabs_count--;
         }
         return fragment;
@@ -447,6 +445,7 @@ var Console = /** @class */ (function () {
     Console.DOM_NODE = document.body;
     return Console;
 }());
-exports.ConsoleInDom = Console;
-exports.default = Console;
+export default Console;
+// let console = Console.render()
+export { /* console,  */ Console as ConsoleInDom };
 //# sourceMappingURL=console.js.map
