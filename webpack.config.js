@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlwebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 module.exports = {
   entry: path.join(__dirname, './src/demo.ts'),
@@ -32,7 +33,8 @@ module.exports = {
     new HtmlwebpackPlugin({
       template: path.join(__dirname, './src/index.html')
     }),
-    new ExtractTextPlugin('console.css')
+    new ExtractTextPlugin('console.css'),
+    new OptimizeCssAssetsPlugin()
   ],
   target: 'web',
   devServer: {

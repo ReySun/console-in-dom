@@ -1,37 +1,4 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.ConsoleInDom = factory());
-}(this, (function () { 'use strict';
-
-function typeOf(variable) {
-    return Object.prototype.toString.call(variable).slice(8, -1);
-}
-var IsType;
-(function (IsType) {
-    IsType[IsType["String"] = 0] = "String";
-    IsType[IsType["Number"] = 1] = "Number";
-    IsType[IsType["Boolean"] = 2] = "Boolean";
-    IsType[IsType["Null"] = 3] = "Null";
-    IsType[IsType["Undefined"] = 4] = "Undefined";
-    IsType[IsType["Array"] = 5] = "Array";
-    IsType[IsType["Object"] = 6] = "Object";
-    IsType[IsType["Function"] = 7] = "Function";
-    IsType[IsType["Window"] = 8] = "Window";
-    IsType[IsType["MouseEvent"] = 9] = "MouseEvent";
-    IsType[IsType["Error"] = 10] = "Error";
-    IsType[IsType["HTMLDocument"] = 11] = "HTMLDocument";
-})(IsType || (IsType = {}));
-function _listen(target, eventName, callback) {
-    target.addEventListener(eventName, callback, false);
-    return function () {
-        target.removeEventListener(eventName, callback, false);
-    };
-}
-function _isEmptyObject(obj) {
-    return Object.getOwnPropertyNames(obj).length > 0 ? false : true;
-}
-
+import { typeOf, IsType, _listen, _isEmptyObject } from './util/index';
 // https://stackoverflow.com/questions/30174078/how-to-define-singleton-in-typescript
 // http://www.codebelt.com/typescript/typescript-singleton-pattern/
 var Console = /** @class */ (function () {
@@ -40,6 +7,7 @@ var Console = /** @class */ (function () {
         this.array_tabs_count = 0;
         this.object_tabs_count = 0;
     }
+    ;
     Console.render = function (node) {
         if (!Console.log)
             Console.log = new Console();
@@ -167,12 +135,14 @@ var Console = /** @class */ (function () {
             triangle = document.createElement('span');
             triangle.innerHTML = 'Array';
         }
+        ;
         var arrLen = document.createElement('span');
         arrLen.className = '_public';
         arrLen.innerHTML = "(" + arr.length + ") ";
         folderSpan.appendChild(triangle);
         folderSpan.appendChild(arrLen);
         folderSpan.appendChild(start);
+        var hasClick = false;
         if (arr.length !== 0) {
             var len = 0;
             var undefined_repeat_pos = -1;
@@ -475,8 +445,7 @@ var Console = /** @class */ (function () {
     Console.DOM_NODE = document.body;
     return Console;
 }());
-
-return Console;
-
-})));
-//# sourceMappingURL=index.js.map
+export default Console;
+// let console = Console.render()
+export { /* console,  */ Console as ConsoleInDom };
+//# sourceMappingURL=console.js.map
