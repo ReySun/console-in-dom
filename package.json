@@ -1,6 +1,6 @@
 {
   "name": "console-in-dom",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "rewite browser's method of console.log, console.log in DOM",
   "home": "https://reysun.github.io/console-in-dom/",
   "repository": {

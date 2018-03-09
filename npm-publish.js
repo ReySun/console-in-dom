@@ -10,6 +10,7 @@ var package = Object.assign({}, PKG, {
 
 fs.copySync('./dist/global', './dist/package');
 fs.copyFileSync('./dist/demo/console.css', './dist/package/console.css');
+fs.copyFileSync('./README.md', './dist/package/README.md');
 fs.writeJsonSync('./dist/package/package.json', package);
 fs.copySync('./dist/typings', './dist/package/typings');
 fs.copySync('./dist/cjs', './dist/package/cjs');
