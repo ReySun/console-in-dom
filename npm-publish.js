@@ -4,7 +4,7 @@ var PKG = require('./package.json');
 delete PKG.scripts;
 delete PKG.devDependencies;
 var package = Object.assign({}, PKG, {
-  main: "./console.js",
+  main: "./cjs/console.js",
   typings: "./typings/console.d.ts"
 })
 
