@@ -8,10 +8,17 @@
   <title>ConsoleInDom</title>
 </head>
 <body>
-  <script src="../dist/package/console.min.js"></script>
+  <script src="../dist/package/console.js"></script>
   <script>
-    var Console = ConsoleInDom.render()
-    Console.log(2)
+    var originConsole = console
+    var console = ConsoleInDom.render()
+    console.log(2);
+    try {
+      console.log(w);
+    } catch (error) {
+      console.log(error.name +': '+ error.message)
+      originConsole.log(error);
+    }
   </script>
 </body>
 </html>

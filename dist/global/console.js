@@ -49,7 +49,7 @@ var Console = /** @class */ (function () {
     };
     Console.prototype.log = function (msg) {
         // console.log(typeOf(msg))
-        console.log(msg);
+        // console.log(msg);
         var li = document.createElement('li');
         li.className = 'output-li';
         var timeLine = this._createTimeLine();
