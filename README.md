@@ -33,7 +33,7 @@ console.log(1);
 ```
 
 #### unpkg
-[https://unpkg.com/console-in-dom@1.0.1/console.min.js](https://unpkg.com/console-in-dom@1.0.1/console.min.js)
+[https://unpkg.com/console-in-dom@1.2.0/console.min.js](https://unpkg.com/console-in-dom@1.0.1/console.min.js)
 ``` html
 <!DOCTYPE html>
 <html lang="en">
@@ -41,12 +41,12 @@ console.log(1);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://unpkg.com/console-in-dom@1.1.0/console.css">
+  <link rel="stylesheet" href="https://unpkg.com/console-in-dom@1.2.0/console.css">
   <title>console-in-dom</title>
 </head>
 <body>
   <div id="console_output"></div>
-  <script src="https://unpkg.com/console-in-dom@1.1.0/console.min.js"></script>
+  <script src="https://unpkg.com/console-in-dom@1.2.0/console.min.js"></script>
   <script>
     var Console = ConsoleInDom.render();
     Console.log(1);
